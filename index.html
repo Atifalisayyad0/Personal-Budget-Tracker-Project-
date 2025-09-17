@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Personal Expense Calculator</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Chart.js + datalabels (for doughnut percentages) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">💰</div>
+      <div class="title">Personal Expense Calculator</div>
+    </div>
+    <div class="header-actions">
+      <button id="theme-toggle" class="theme-btn" title="Cycle theme">☀️</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Add Transaction -->
+    <section class="card form-card">
+      <h2>Add Transaction</h2>
+      <div class="grid-2">
+        <label>
+          Type
+          <select id="type-select" class="field">
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
+        </label>
+
+        <label>
+          Category
+          <select id="category-select" class="field">
+            <option value="">Choose category</option>
+            <option value="food">Food</option>
+            <option value="rent">Rent</option>
+            <option value="transport">Transport</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="shopping">Shopping</option>
+            <option value="utilities">Utilities</option>
+            <option value="education">Education</option>
+            <option value="__custom__">Custom</option>
+          </select>
+        </label>
+
+        <label id="custom-cat-wrap" style="display:none">
+          Custom category
+          <input id="custom-category" class="field" placeholder="Enter category" />
+        </label>
+
+        <label>
+          Amount (₹)
+          <input id="amount-input" class="field" type="number" step="0.01" placeholder="0.00" />
+        </label>
+
+        <label>
+          Date
+          <input id="date-input" class="field" type="date" />
+        </label>
+
+        <label>
+          Note
+          <input id="note-input" class="field" placeholder="Optional note" />
+        </label>
+
+        <label>
+          Group (optional)
+          <select id="group-select" class="field">
+            <option value="">No group</option>
+          </select>
+        </label>
+
+        <label>
+          Payer (if group)
+          <select id="payer-select" class="field" disabled>
+            <option value="">Select payer</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button id="add-btn" class="primary">➕ Add Transaction</button>
+        <button id="clear-form" class="ghost">Clear</button>
+      </div>
+    </section>
+
+    <!-- Budget Management -->
+    <section class="card budgets-card">
+      <h2>Budget Management</h2>
+      <div class="grid-3">
+        <label>
+          Month
+          <input id="budget-month" type="month" class="field" />
+        </label>
+        <label>
+          Category
+          <input id="budget-category" class="field" placeholder="Category name" />
+        </label>
+        <label>
+          Limit (₹)
+          <input id="budget-amount" class="field" type="number" step="0.01" placeholder="Monthly limit" />
+        </label>
+      </div>
+      <div class="form-actions" style="margin-top:10px;">
+        <button id="set-budget-btn" class="primary">🎯 Set / Update Budget</button>
+        <button id="view-budgets-btn" class="ghost">Refresh</button>
+      </div>
+
+      <div id="budgets-list" class="budgets-grid" style="margin-top:14px;"></div>
+    </section>
+
+    <!-- Group management & balances -->
+    <section class="card groups-card">
+      <h2>Groups</h2>
+      <div class="grid-3">
+        <label>
+          Group name
+          <input id="group-name" class="field" placeholder="Weekend Trip" />
+        </label>
+        <label>
+          Members (comma separated)
+          <input id="group-members" class="field" placeholder="Alice, Bob, Charlie" />
+        </label>
+        <div style="display:flex; align-items:flex-end;">
+          <button id="create-group" class="primary">👥 Create Group</button>
+        </div>
+      </div>
+
+      <div id="group-balances" style="margin-top:12px;"></div>
+    </section>
+
+    <!-- Charts -->
+    <section class="card charts-card">
+      <h2>Analytics</h2>
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h3>Expense by Category (selected month)</h3>
+          <canvas id="categoryChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <h3>Monthly Overview (6 months)</h3>
+          <canvas id="monthlyChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transactions -->
+    <section class="card history-card">
+      <h2>Transaction History</h2>
+      <div class="table-wrap">
+        <table class="modern-table">
+          <thead>
+            <tr><th>Type</th><th>Category</th><th>Amount</th><th>Date</th><th>Note</th><th>Group</th><th>Payer</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="expense-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div id="notification" class="notification hidden"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
