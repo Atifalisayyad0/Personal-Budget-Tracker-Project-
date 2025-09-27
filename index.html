@@ -1,26 +1,23 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Personal Expense Calculator</title>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 
   <!-- Chart.js + datalabels (for doughnut percentages) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 </head>
-<body>
+<body data-theme="light">
   <header class="topbar">
     <div class="brand">
       <div class="logo">💰</div>
       <div class="title">Personal Expense Calculator</div>
     </div>
     <div class="header-actions">
-      <button id="theme-toggle" class="theme-btn" title="Cycle theme">☀️</button>
+      <button id="theme-toggle" class="theme-btn" title="Cycle theme" fdprocessedid="xxszqn">☀️</button>
     </div>
   </header>
 
@@ -31,7 +28,7 @@
       <div class="grid-2">
         <label>
           Type
-          <select id="type-select" class="field">
+          <select id="type-select" class="field" fdprocessedid="o9uojs">
             <option value="expense">Expense</option>
             <option value="income">Income</option>
           </select>
@@ -39,50 +36,55 @@
 
         <label>
           Category
-          <select id="category-select" class="field">
-            
+          <select id="category-select" class="field" fdprocessedid="qdxjdi">
+            <option value="">Choose category</option>
+            <option value="food">Food</option>
+            <option value="rent">Rent</option>
+            <option value="transport">Transport</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="shopping">Shopping</option>
+            <option value="utilities">Utilities</option>
+            <option value="education">Education</option>
             <option value="__custom__">Custom</option>
           </select>
         </label>
 
-        <label id="custom-cat-wrap" style="display:none">
+        <label id="custom-cat-wrap" style="display: block;">
           Custom category
-          <input id="custom-category" class="field" placeholder="Enter category" />
+          <input id="custom-category" class="field" placeholder="Enter category">
         </label>
 
         <label>
           Amount (₹)
-          <input id="amount-input" class="field" type="number" step="0.01" placeholder="0.00" />
+          <input id="amount-input" class="field" type="number" step="0.01" placeholder="0.00" fdprocessedid="exptzr">
         </label>
 
         <label>
           Date
-          <input id="date-input" class="field" type="date" />
+          <input id="date-input" class="field" type="date">
         </label>
 
         <label>
           Note
-          <input id="note-input" class="field" placeholder="Optional note" />
+          <input id="note-input" class="field" placeholder="Optional note" fdprocessedid="wrdej">
         </label>
 
         <label>
           Group (optional)
-          <select id="group-select" class="field">
-            <option value="">No group</option>
-          </select>
+          <select id="group-select" class="field" fdprocessedid="nblir"><option value="">No group</option></select>
         </label>
 
         <label>
           Payer (if group)
-          <select id="payer-select" class="field" disabled>
+          <select id="payer-select" class="field" disabled="" fdprocessedid="syphah">
             <option value="">Select payer</option>
           </select>
         </label>
       </div>
 
       <div class="form-actions">
-        <button id="add-btn" class="primary">➕ Add Transaction</button>
-        <button id="clear-form" class="ghost">Clear</button>
+        <button id="add-btn" class="primary" fdprocessedid="wyxfek">➕ Add Transaction</button>
+        <button id="clear-form" class="ghost" fdprocessedid="wp983u">Clear</button>
       </div>
     </section>
 
@@ -92,23 +94,23 @@
       <div class="grid-3">
         <label>
           Month
-          <input id="budget-month" type="month" class="field" />
+          <input id="budget-month" type="month" class="field">
         </label>
         <label>
           Category
-          <input id="budget-category" class="field" placeholder="Category name" />
+          <input id="budget-category" class="field" placeholder="Category name" fdprocessedid="whc6c">
         </label>
         <label>
           Limit (₹)
-          <input id="budget-amount" class="field" type="number" step="0.01" placeholder="Monthly limit" />
+          <input id="budget-amount" class="field" type="number" step="0.01" placeholder="Monthly limit" fdprocessedid="l8vmt6q">
         </label>
       </div>
       <div class="form-actions" style="margin-top:10px;">
-        <button id="set-budget-btn" class="primary">🎯 Set / Update Budget</button>
-        <button id="view-budgets-btn" class="ghost">Refresh</button>
+        <button id="set-budget-btn" class="primary" fdprocessedid="cd3cjm">🎯 Set / Update Budget</button>
+        <button id="view-budgets-btn" class="ghost" fdprocessedid="p1b8k7">Refresh</button>
       </div>
 
-      <div id="budgets-list" class="budgets-grid" style="margin-top:14px;"></div>
+      <div id="budgets-list" class="budgets-grid" style="margin-top:14px;"><div class="small-muted">No budgets set for 2025-09</div></div>
     </section>
 
     <!-- Group management & balances -->
@@ -117,18 +119,18 @@
       <div class="grid-3">
         <label>
           Group name
-          <input id="group-name" class="field" placeholder="Weekend Trip" />
+          <input id="group-name" class="field" placeholder="Weekend Trip" fdprocessedid="45jcjm">
         </label>
         <label>
           Members (comma separated)
-          <input id="group-members" class="field" placeholder="Alice, Bob, Charlie" />
+          <input id="group-members" class="field" placeholder="Alice, Bob, Charlie" fdprocessedid="7jek6">
         </label>
         <div style="display:flex; align-items:flex-end;">
-          <button id="create-group" class="primary">👥 Create Group</button>
+          <button id="create-group" class="primary" fdprocessedid="zbvx5o">👥 Create Group</button>
         </div>
       </div>
 
-      <div id="group-balances" style="margin-top:12px;"></div>
+      <div id="group-balances" style="margin-top:12px;"><div class="small-muted">No groups created yet</div></div>
     </section>
 
     <!-- Charts -->
@@ -137,9 +139,11 @@
       <div class="charts-grid">
         <div class="chart-container">
           <h3>Expense by Category (selected month)</h3>
-          <canvas id="categoryChart"></canvas>
+          <canvas id="categoryChart" style="box-sizing: border-box; display: block; height: 280px; width: 416px;" width="521" height="350"></canvas>
         </div>
-        
+        <div class="chart-container">
+          <h3>Monthly Overview (6 months)</h3>
+          <canvas id="monthlyChart" style="box-sizing: border-box; display: block; height: 280px; width: 416px;" width="521" height="350"></canvas>
         </div>
       </div>
     </section>
@@ -158,9 +162,9 @@
     </section>
   </main>
 
-  <div id="notification" class="notification hidden"></div>
+  <div id="notification" class="notification hidden" style="background: var(--accent);">Transaction deleted</div>
 
   <script src="script.js"></script>
-</body>
-</html>
 
+
+<span id="PING_IFRAME_FORM_DETECTION" style="display: none;"></span></body></html>
