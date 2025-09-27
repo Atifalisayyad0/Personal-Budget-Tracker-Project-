@@ -1,169 +1,174 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Personal Expense & Budget Tracker</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Personal Expense Calculator</title>
 
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
 
-<style>
-:root{
-  --bg:#f5f8fb; --card:#ffffff; --text:#0b1220; --muted:#6b7280;
-  --accent:#10b981; --danger:#ef4444; --border:#e6eef3;
-  --radius:12px; --shadow: 0 8px 24px rgba(16,24,40,.06);
-}
-body[data-theme="dark"]{ --bg:#071023; --card:#0f1724; --text:#e6f1fb; --muted:#9fb3c8; --border:#1f2f3e; }
-body[data-theme="neon"]{ --bg:#000512; --card:#071229; --text:#eaffff; --muted:#a6f0e7; --accent:#00ffcc; --border:#072033; }
-
-*{box-sizing:border-box}
-body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto; margin:0; background:linear-gradient(180deg,var(--bg),#f3f7fb); color:var(--text); transition:all .25s}
-.container{max-width:1200px;margin:22px auto;padding:0 18px}
-
-/* Topbar */
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:linear-gradient(90deg,var(--accent),#3b82f6);box-shadow:var(--shadow);border-radius:10px;color:#fff}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.12);font-size:20px}
-.title{font-weight:700}
-
-/* Cards */
-.card{background:var(--card);border-radius:var(--radius);padding:16px;margin-top:18px;border:1px solid var(--border);box-shadow:var(--shadow)}
-.card h2{margin:0 0 10px 0}
-
-/* Grid helpers */
-.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}}
-
-/* inputs & buttons */
-.field{display:block;padding:10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text)}
-.primary{background:linear-gradient(135deg,var(--accent),#059669);color:#fff;border:none;padding:10px 12px;border-radius:10px;cursor:pointer}
-.ghost{background:transparent;border:1px solid var(--border);padding:10px 12px;border-radius:10px;cursor:pointer}
-.theme-btn{width:46px;height:46px;border-radius:999px;border:none;background:rgba(255,255,255,0.12);font-size:18px;cursor:pointer}
-
-/* form actions */
-.form-actions{display:flex;gap:10px;margin-top:12px}
-
-/* budgets list */
-.budgets-grid{display:grid;gap:10px}
-.budget-item{display:flex;justify-content:space-between;align-items:flex-start;padding:12px;border-radius:10px;border:1px solid var(--border);background:linear-gradient(180deg,var(--card),#f8fbfc)}
-.budget-left{max-width:72%}
-.budget-top{display:flex;justify-content:space-between;align-items:center}
-.budget-progress{margin-top:8px;height:10px;background:var(--border);border-radius:999px;overflow:hidden}
-.budget-fill{height:100%;transition:width .5s ease}
-
-/* groups */
-.group-balance-item{padding:12px;border-radius:10px;background:linear-gradient(180deg,#f6f9ff,#eef6ff);border:1px solid var(--border)}
-.member-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
-.member-badge{background:rgba(0,0,0,0.04);padding:6px 8px;border-radius:999px;font-weight:600}
-
-/* charts */
-.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.chart-container{padding:12px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center}
-.chart-container h3{margin:0 0 8px 0}
-.chart-container canvas{max-width:100%;max-height:280px}
-@media(max-width:768px){.charts-grid{grid-template-columns:1fr}.chart-container canvas{max-height:220px}}
-
-/* table */
-.table-wrap{overflow:auto}
-.modern-table{width:100%;border-collapse:collapse}
-.modern-table th, .modern-table td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
-.modern-table th{background:linear-gradient(90deg,var(--accent),#3b82f6);color:#fff}
-
-/* notification */
-.notification{position:fixed;right:18px;bottom:18px;padding:10px 14px;border-radius:10px;color:#fff;background:var(--accent);box-shadow:var(--shadow)}
-.notification.hidden{display:none}
-</style>
+  <!-- Chart.js + datalabels (for doughnut percentages) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 </head>
-<body data-theme="light">
-<div class="container">
-  <div class="topbar">
-    <div class="brand"><div class="logo">💰</div><div class="title">Expense Tracker</div></div>
-    <button class="theme-btn" id="theme-toggle">☀️</button>
-  </div>
-
-  <div class="card">
-    <h2>Add Transaction</h2>
-    <div class="grid-2">
-      <select id="type-select" class="field">
-        <option value="expense">Expense</option>
-        <option value="income">Income</option>
-      </select>
-      <select id="category-select" class="field">
-        <option value="">Select Category</option>
-        <option value="Food">Food</option>
-        <option value="Transport">Transport</option>
-        <option value="__custom__">Custom</option>
-      </select>
-      <div id="custom-cat-wrap" style="display:none"><input id="custom-category" class="field" placeholder="Custom category"></div>
-      <input id="amount-input" class="field" placeholder="Amount" type="number">
-      <input id="date-input" class="field" type="date">
-      <input id="note-input" class="field" placeholder="Note">
-      <select id="group-select" class="field">
-        <option value="">No group</option>
-      </select>
-      <select id="payer-select" class="field" disabled>
-        <option value="">Select payer</option>
-      </select>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">💰</div>
+      <div class="title">Personal Expense Calculator</div>
     </div>
-    <div class="form-actions">
-      <button id="add-btn" class="primary">Add Transaction</button>
-      <button id="clear-form" class="ghost">Clear Form</button>
+    <div class="header-actions">
+      <button id="theme-toggle" class="theme-btn" title="Cycle theme">☀️</button>
     </div>
-  </div>
+  </header>
 
-  <div class="card">
-    <h2>Budgets</h2>
-    <div class="grid-2">
-      <input id="budget-month" type="month" class="field">
-      <input id="budget-category" placeholder="Category" class="field">
-      <input id="budget-amount" placeholder="Amount" class="field" type="number">
-    </div>
-    <div class="form-actions">
-      <button id="set-budget-btn" class="primary">Set Budget</button>
-      <button id="view-budgets-btn" class="ghost">View Budgets</button>
-    </div>
-    <div class="budgets-grid" id="budgets-list"></div>
-  </div>
+  <main class="container">
+    <!-- Add Transaction -->
+    <section class="card form-card">
+      <h2>Add Transaction</h2>
+      <div class="grid-2">
+        <label>
+          Type
+          <select id="type-select" class="field">
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
+        </label>
 
-  <div class="card">
-    <h2>Groups</h2>
-    <div class="grid-2">
-      <input id="group-name" placeholder="Group Name" class="field">
-      <input id="group-members" placeholder="Members (comma separated)" class="field">
-    </div>
-    <button id="create-group" class="primary">Create Group</button>
-    <div id="group-balances" style="margin-top:12px;"></div>
-  </div>
+        <label>
+          Category
+          <select id="category-select" class="field">
+            <option value="">Choose category</option>
+            <option value="food">Food</option>
+            <option value="rent">Rent</option>
+            <option value="transport">Transport</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="shopping">Shopping</option>
+            <option value="utilities">Utilities</option>
+            <option value="education">Education</option>
+            <option value="__custom__">Custom</option>
+          </select>
+        </label>
 
-  <div class="charts-grid">
-    <div class="chart-container">
-      <h3>Category Breakdown</h3>
-      <canvas id="categoryChart"></canvas>
-    </div>
-    <div class="chart-container">
-      <h3>Income vs Expense (6 months)</h3>
-      <canvas id="monthlyChart"></canvas>
-    </div>
-  </div>
+        <label id="custom-cat-wrap" style="display:none">
+          Custom category
+          <input id="custom-category" class="field" placeholder="Enter category" />
+        </label>
 
-  <div class="card table-wrap">
-    <h2>Transactions</h2>
-    <table class="modern-table">
-      <thead><tr>
-        <th>Type</th><th>Category</th><th>Amount</th><th>Date</th><th>Note</th><th>Group</th><th>Payer</th><th>Actions</th>
-      </tr></thead>
-      <tbody id="expense-table-body"></tbody>
-    </table>
-  </div>
-</div>
+        <label>
+          Amount (₹)
+          <input id="amount-input" class="field" type="number" step="0.01" placeholder="0.00" />
+        </label>
 
-<div class="notification hidden" id="notification"></div>
+        <label>
+          Date
+          <input id="date-input" class="field" type="date" />
+        </label>
 
-<script>
-/* Full JS code from previous corrected bundle goes here */
-</script>
+        <label>
+          Note
+          <input id="note-input" class="field" placeholder="Optional note" />
+        </label>
+
+        <label>
+          Group (optional)
+          <select id="group-select" class="field">
+            <option value="">No group</option>
+          </select>
+        </label>
+
+        <label>
+          Payer (if group)
+          <select id="payer-select" class="field" disabled>
+            <option value="">Select payer</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button id="add-btn" class="primary">➕ Add Transaction</button>
+        <button id="clear-form" class="ghost">Clear</button>
+      </div>
+    </section>
+
+    <!-- Budget Management -->
+    <section class="card budgets-card">
+      <h2>Budget Management</h2>
+      <div class="grid-3">
+        <label>
+          Month
+          <input id="budget-month" type="month" class="field" />
+        </label>
+        <label>
+          Category
+          <input id="budget-category" class="field" placeholder="Category name" />
+        </label>
+        <label>
+          Limit (₹)
+          <input id="budget-amount" class="field" type="number" step="0.01" placeholder="Monthly limit" />
+        </label>
+      </div>
+      <div class="form-actions" style="margin-top:10px;">
+        <button id="set-budget-btn" class="primary">🎯 Set / Update Budget</button>
+        <button id="view-budgets-btn" class="ghost">Refresh</button>
+      </div>
+
+      <div id="budgets-list" class="budgets-grid" style="margin-top:14px;"></div>
+    </section>
+
+    <!-- Group management & balances -->
+    <section class="card groups-card">
+      <h2>Groups</h2>
+      <div class="grid-3">
+        <label>
+          Group name
+          <input id="group-name" class="field" placeholder="Weekend Trip" />
+        </label>
+        <label>
+          Members (comma separated)
+          <input id="group-members" class="field" placeholder="Alice, Bob, Charlie" />
+        </label>
+        <div style="display:flex; align-items:flex-end;">
+          <button id="create-group" class="primary">👥 Create Group</button>
+        </div>
+      </div>
+
+      <div id="group-balances" style="margin-top:12px;"></div>
+    </section>
+
+    <!-- Charts -->
+    <section class="card charts-card">
+      <h2>Analytics</h2>
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h3>Expense by Category (selected month)</h3>
+          <canvas id="categoryChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <h3>Monthly Overview (6 months)</h3>
+          <canvas id="monthlyChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transactions -->
+    <section class="card history-card">
+      <h2>Transaction History</h2>
+      <div class="table-wrap">
+        <table class="modern-table">
+          <thead>
+            <tr><th>Type</th><th>Category</th><th>Amount</th><th>Date</th><th>Note</th><th>Group</th><th>Payer</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="expense-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div id="notification" class="notification hidden"></div>
+
+  <script src="script.js"></script>
 </body>
 </html>
